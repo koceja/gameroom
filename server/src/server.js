@@ -123,7 +123,7 @@ const resolvers = {
             else {return false;}
           }
         }
-      }      
+      },      
 
       deactivateAccount: (parent, args) => {
         if (userlist.length==1) {
