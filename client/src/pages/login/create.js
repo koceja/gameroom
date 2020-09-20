@@ -2,27 +2,55 @@ import React from 'react';
 import { Row, Col, Card, Form, Input, Button, Checkbox } from 'antd';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/logo.png';
+import { gql, useMutation } from '@apollo/client';
+import { useQuery } from '@apollo/client';
+
+const USER = gql`
+  query user {
+    user(username: "daniel") {
+      username
+      password
+    }
+  }
+`;
+
+
+const CREATE_ACCOUNT = gql`
+  mutation createAccount($username: String!, $password: String!) {
+    createAccount(username: $username, password: $password) {
+      username
+      password
+    }
+  }
+`;
+
 
 const layout = {
     labelCol: {
-        span: 8,
+        span: 6,
     },
     wrapperCol: {
-        span: 16,
+        span: 18,
     },
 };
 const tailLayout = {
     wrapperCol: {
-        offset: 8,
-        span: 16,
+        offset: 6,
+        span: 18,
     },
 };
 
 const interests = ['spirituality', 'baking', 'golf', 'gardening', 'surfing', 'sports', 'photography', 'astrology', 'vlogging', 'writing', 'picnicking', 'running', 'cooking', 'disney', 'art', 'pets', 'instagram', 'board games', 'movies', 'exercise', 'museums', 'languages', 'food', 'blogging', 'hiking', 'volunteering', 'dancing', 'climbing', 'tea', 'comedy', 'politics', 'brunch', 'fishing'];
-const games = []
 
 const Create = () => {
+    const { loading, error, data } = useQuery(USER);
+    if (!loading) {console.log(data);}
+    const [
+        createAccount,
+        { loading: mutationLoading, error: mutationError }
+      ] = useMutation(CREATE_ACCOUNT);
     const onFinish = (values) => {
+        createAccount({variables: {username: values.username, password: values.password}});
         console.log('Success:', values);
     };
 
@@ -31,7 +59,9 @@ const Create = () => {
     };
 
     return (
+        
         <Row style={{ height: "100vh", backgroundColor: "#d9d9d9" }} align="middle">
+            <Button onClick={() => {createAccount({variables: {username: "daniel-1", password: "password"}})}}>Create</Button>
             <Col xs={{ span: 20, offset: 2 }} sm={{ span: 20, offset: 2 }} md={{ span: 16, offset: 4 }} lg={{ span: 14, offset: 5 }} xl={{ span: 10, offset: 7 }} xxl={{ span: 8, offset: 8 }}>
                 <Card>
                     <Link to="/">
@@ -102,6 +132,8 @@ const Create = () => {
                             </Link>
                         </Form.Item>
                     </Form>
+                    {mutationLoading && <p>Loading...</p>}
+        {mutationError && <p>Error :( Please try again</p>}
                 </Card>
             </Col>
         </Row>

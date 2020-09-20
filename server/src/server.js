@@ -5,8 +5,15 @@ const bodyParser = require('body-parser');
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
 const { makeExecutableSchema } = require('graphql-tools');
 const e = require('express');
+<<<<<<< HEAD
 const mongoose = require('mongoose');
 mongoose.connect("mongodb+srv://sahilp:xjKCN5AHSres51Jt@cluster0.bvhd7.mongodb.net/Gameroom?retryWrites=true&w=majority", { useUnifiedTopology: true, useNewUrlParser: true });
+=======
+const cors = require('cors');
+const { ApolloServer, gql } = require('apollo-server');
+// const mongoose = require('mongoose');
+// mongoose.connect("mongodb://localhost:27017/UserApp");
+>>>>>>> 32ada74fc57a35dd79105aaa4104845759c1a55f
 
 const User = mongoose.model ("User", {
   username: String,
@@ -31,7 +38,8 @@ const Message = mongoose.model ("Message", {
   time: String
 })
 
-const typeDefs = `
+
+const typeDefs = gql`
   type Query {
     users: [User!]
     groups: [Group!]
@@ -509,15 +517,26 @@ const schema = makeExecutableSchema({
   resolvers,
 });
 
+const corsOptions = {
+origin: 'http://localhost:3000',
+credentials: true,
+};
+
+const server = new ApolloServer({ cors: corsOptions, typeDefs, resolvers});
+
+server.listen().then(({ url }) => {
+  console.log(`🚀  Server ready at ${url}`);
+});
+
 // Initialize the app
-const app = express();
+// const app = express();
 
-// The GraphQL endpoint
-app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
+// app.use(cors(corsOptions));
 
-// GraphiQL, a visual editor for queries
-app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
+// // The GraphQL endpoint
+// app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
 
+<<<<<<< HEAD
 // Start the server
 mongoose.connection.once("open", () =>{
   console.log("connected to database");
@@ -525,3 +544,12 @@ mongoose.connection.once("open", () =>{
 app.listen(4000, () => {
   console.log('Go to http://localhost:4000/graphiql to run queries!');
 });
+=======
+// // GraphiQL, a visual editor for queries
+// app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
+
+// // Start the server
+// app.listen(4000, () => {
+//   console.log('Go to http://localhost:4000/graphiql to run queries!');
+// });
+>>>>>>> 32ada74fc57a35dd79105aaa4104845759c1a55f
