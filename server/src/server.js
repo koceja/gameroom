@@ -42,6 +42,9 @@ const typeDefs = gql`
     groups: [Group!]
     user(username: String!): User
   }
+  type Subscription {
+    notificationReceived(uid: ID!): User!
+  }
   type Mutation {
     createAccount(username: String!, password: String!, personalInterests: [String!]!): User!
     login(username: String!, password: String!): User!
@@ -100,7 +103,7 @@ const resolvers = {
     users: () => userlist,
     groups: () => grouplist,
     user: (parent, args) => {
-        for (let i =0; i<uidCount; i++) {
+        for (let i =0; i<userlist.length; i++) {
             if (userlist[i].username===args.username) {
                 return userlist[i];
             }
@@ -505,7 +508,17 @@ const resolvers = {
             }
         }
         },
-  }
+  },
+
+  Subscription: {
+    notificationReceived: (parent, args) => {
+        for (let i=0; i<userlist.length; i++) {
+          if (userlist[i].uid===args.uid) {
+            return userlist[i]
+          }
+        }
+    }
+  },
 }
 
 // Put together a schema
