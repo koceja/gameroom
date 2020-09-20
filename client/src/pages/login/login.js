@@ -2,19 +2,29 @@ import React from 'react';
 import { Row, Col, Card, Form, Input, Button, Checkbox } from 'antd';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/logo.png';
+import { gql, useQuery } from '@apollo/client';
+
+const ACTIVATE_ACCOUNT = gql`
+  mutation GetDogs {
+    dogs {
+      id
+      breed
+    }
+  }
+`;
 
 const layout = {
     labelCol: {
-        span: 8,
+        span: 6,
     },
     wrapperCol: {
-        span: 16,
+        span: 18,
     },
 };
 const tailLayout = {
     wrapperCol: {
-        offset: 8,
-        span: 16,
+        offset: 6,
+        span: 18,
     },
 };
 

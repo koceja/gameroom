@@ -5,8 +5,11 @@ const bodyParser = require('body-parser');
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
 const { makeExecutableSchema } = require('graphql-tools');
 const e = require('express');
+const cors = require('cors');
+const { ApolloServer, gql } = require('apollo-server');
 
-const typeDefs = `
+
+const typeDefs = gql`
   type Query {
     users: [User!]
     groups: [Group!]
@@ -468,16 +471,29 @@ const schema = makeExecutableSchema({
   resolvers,
 });
 
-// Initialize the app
-const app = express();
+const corsOptions = {
+origin: 'http://localhost:3000',
+credentials: true,
+};
 
-// The GraphQL endpoint
-app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
+const server = new ApolloServer({ cors: corsOptions, typeDefs, resolvers});
 
-// GraphiQL, a visual editor for queries
-app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
-
-// Start the server
-app.listen(4000, () => {
-  console.log('Go to http://localhost:4000/graphiql to run queries!');
+server.listen().then(({ url }) => {
+  console.log(`🚀  Server ready at ${url}`);
 });
+
+// Initialize the app
+// const app = express();
+
+// app.use(cors(corsOptions));
+
+// // The GraphQL endpoint
+// app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
+
+// // GraphiQL, a visual editor for queries
+// app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
+
+// // Start the server
+// app.listen(4000, () => {
+//   console.log('Go to http://localhost:4000/graphiql to run queries!');
+// });
