@@ -1,0 +1,21 @@
+
+
+#home-descriptions {
+    padding-top: 70px;
+    padding-bottom: 70px;
+    background-color: #b6b6b6;
+}
+
+.home-description {
+    background-color: #333333 !important;
+    color: white !important;
+    text-align: center !important;
+    border-color: #333333 !important;
+}
+
+.home-icon {
+    font-size: 160px;
+    color: #fd6c6c !important;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
