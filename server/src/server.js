@@ -5,15 +5,12 @@ const bodyParser = require('body-parser');
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
 const { makeExecutableSchema } = require('graphql-tools');
 const e = require('express');
-<<<<<<< HEAD
 const mongoose = require('mongoose');
 mongoose.connect("mongodb+srv://sahilp:xjKCN5AHSres51Jt@cluster0.bvhd7.mongodb.net/Gameroom?retryWrites=true&w=majority", { useUnifiedTopology: true, useNewUrlParser: true });
-=======
 const cors = require('cors');
 const { ApolloServer, gql } = require('apollo-server');
 // const mongoose = require('mongoose');
 // mongoose.connect("mongodb://localhost:27017/UserApp");
->>>>>>> 32ada74fc57a35dd79105aaa4104845759c1a55f
 
 const User = mongoose.model ("User", {
   username: String,
@@ -47,7 +44,7 @@ const typeDefs = gql`
   }
   type Mutation {
     createAccount(username: String!, password: String!, personalInterests: [String!]!): User!
-    login(username: String!, password: String!): Boolean!
+    login(username: String!, password: String!): User!
     deactivateAccount(uid: ID!): [User!]
     updatePersonalInterests(uid: ID!, personalInterests: [String!]!): User!
     createGroup(uid: ID!, game: String!, groupSize: Int!): User!
@@ -142,9 +139,9 @@ const resolvers = {
         for (let i=0; i<userlist.length; i++) {
           if (userlist[i].username===args.username) {
             if (userlist[i].password===args.password) {
-              return true;
+              return userlist[i];
             }
-            else {return false;}
+            else {throw new Error("Failed login attempt")}
           }
         }
       },      
@@ -536,7 +533,6 @@ server.listen().then(({ url }) => {
 // // The GraphQL endpoint
 // app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
 
-<<<<<<< HEAD
 // Start the server
 mongoose.connection.once("open", () =>{
   console.log("connected to database");
@@ -544,7 +540,6 @@ mongoose.connection.once("open", () =>{
 app.listen(4000, () => {
   console.log('Go to http://localhost:4000/graphiql to run queries!');
 });
-=======
 // // GraphiQL, a visual editor for queries
 // app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
@@ -552,4 +547,3 @@ app.listen(4000, () => {
 // app.listen(4000, () => {
 //   console.log('Go to http://localhost:4000/graphiql to run queries!');
 // });
->>>>>>> 32ada74fc57a35dd79105aaa4104845759c1a55f
