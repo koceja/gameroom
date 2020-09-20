@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Row, Col, Card, Form, Input, Button, Checkbox } from 'antd';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import logo from '../../assets/logo.png';
 import { gql, useMutation } from '@apollo/client';
 import { useQuery } from '@apollo/client';
@@ -8,7 +8,9 @@ import { useQuery } from '@apollo/client';
 
 const LOGIN = gql`
   mutation login($username: String!, $password: String!) {
-    login(username: $username, password: $password)
+    login(username: $username, password: $password) {
+        username
+    }
   }
 `;
 
@@ -28,7 +30,8 @@ const tailLayout = {
     },
 };
 
-const Login = () => {
+const Login = (props) => {
+    const [redirect, setRedirect] = useState(false);
     const [
         login,
         { loading: mutationLoading, error: mutationError }
@@ -40,9 +43,10 @@ const Login = () => {
         )
          
         {
-        
-              localStorage.setItem("username", login);
-              client.writeData({ data: { isLoggedIn: true } });    }
+            console.log(login);
+            localStorage.setItem("username", login.username);
+            props.logIn();
+            setRedirect(true);}
           });
     const onFinish = (values) => {
         login({variables: {username: values.username, password: values.password}});
@@ -52,6 +56,8 @@ const Login = () => {
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
+
+    if (redirect) {return (<Redirect to={'/'} />)}
 
     return (
         <Row style={{height: "100vh", backgroundColor: "#d9d9d9"}} align="middle">

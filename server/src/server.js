@@ -44,7 +44,7 @@ const typeDefs = gql`
   }
   type Mutation {
     createAccount(username: String!, password: String!, personalInterests: [String!]!): User!
-    login(username: String!, password: String!): Boolean!
+    login(username: String!, password: String!): User!
     deactivateAccount(uid: ID!): [User!]
     updatePersonalInterests(uid: ID!, personalInterests: [String!]!): User!
     createGroup(uid: ID!, game: String!, groupSize: Int!): User!
@@ -139,9 +139,9 @@ const resolvers = {
         for (let i=0; i<userlist.length; i++) {
           if (userlist[i].username===args.username) {
             if (userlist[i].password===args.password) {
-              return true;
+              return userlist[i];
             }
-            else {return false;}
+            else {throw new Error("Failed login attempt")}
           }
         }
       },      

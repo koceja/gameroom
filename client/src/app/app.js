@@ -11,18 +11,25 @@ import PrivateRoute from './auth.js';
 
 class App extends React.Component {
 
-	isLoggedIn() {
+	constructor(props) {
+		super(props);
+		this.state = {
+			authed: (!!localStorage.getItem('username'))
+		}
+		this.logIn = this.logIn.bind(this);
+	}
+
+	logIn() {
 		const username = localStorage.getItem('username');
-		return (!!username);
+		this.setState({authed: (!!username)});
 	}
 
 	render() {
-		const authed = this.isLoggedIn();
 		return (
 			<div>
 				<Switch>
 					<Route exact path="/login">
-						<Login />
+						<Login logIn={this.logIn} />
 					</Route>
 					<Route exact path="/create">
 						<Create />
@@ -30,8 +37,9 @@ class App extends React.Component {
 					<Route exact path="/">
 						<Home />
 					</Route>
-					<PrivateRoute component={<Groups />} authed={authed} path="/groups" />
-					<PrivateRoute component={<Profile />} authed={authed} path="/profile" />
+					<PrivateRoute component={Groups} authed={this.state.authed} path="/groups/:group" />
+					<PrivateRoute component={Groups} authed={this.state.authed} path="/groups" />
+					<PrivateRoute component={Profile} authed={this.state.authed} path="/profile" />
 				</Switch>
 			</div>
 				

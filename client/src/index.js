@@ -15,14 +15,40 @@ import 'antd/dist/antd.css';
 //import { ApolloProvider } from '@apollo/react-hooks'
 
 import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { split } from '@apollo/client';
+
 import { ApolloProvider } from '@apollo/client';
-import { gql, useMutation } from '@apollo/client';
-import { useQuery } from '@apollo/client';
+import { getMainDefinition } from '@apollo/client/utilities';
+
 import { createHttpLink } from 'apollo-link-http';
 
+import { WebSocketLink } from '@apollo/client/link/ws';
+
+const httpLink = createHttpLink({
+  uri: 'http://localhost:4000/'
+});
+
+const wsLink = new WebSocketLink({
+  uri: `ws://localhost:4000/graphql`,
+  options: {
+    reconnect: true
+  }
+});
+
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === 'OperationDefinition' &&
+      definition.operation === 'subscription'
+    );
+  },
+  wsLink,
+  httpLink,
+);
 
 const client = new ApolloClient({
-  uri: createHttpLink({ uri: 'http://localhost:4000/' }),
+  uri: splitLink,
   cache: new InMemoryCache()
 });
 
