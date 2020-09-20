@@ -5,8 +5,8 @@ const bodyParser = require('body-parser');
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
 const { makeExecutableSchema } = require('graphql-tools');
 const e = require('express');
-const mongoose = require('mongoose');
-mongoose.connect("mongodb://localhost:27017/UserApp");
+// const mongoose = require('mongoose');
+// mongoose.connect("mongodb://localhost:27017/UserApp");
 
 // const User = mongoose.model("User", {
 //   username: String,
@@ -23,7 +23,7 @@ const typeDefs = `
   }
   type Mutation {
     createAccount(username: String!, password: String!, personalInterests: [String!]!): User!
-    login(username: String!, password: String!): boolean!
+    login(username: String!, password: String!): Boolean!
     deactivateAccount(uid: ID!): [User!]
     updatePersonalInterests(uid: ID!, personalInterests: [String!]!): User!
     createGroup(uid: ID!, game: String!, groupSize: Int!): User!
