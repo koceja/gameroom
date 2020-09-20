@@ -7,6 +7,15 @@ const { makeExecutableSchema } = require('graphql-tools');
 const e = require('express');
 const cors = require('cors');
 const { ApolloServer, gql } = require('apollo-server');
+// const mongoose = require('mongoose');
+// mongoose.connect("mongodb://localhost:27017/UserApp");
+
+// const User = mongoose.model("User", {
+//   username: String,
+//   password: String,
+//   groups: [Group],
+
+// })
 
 
 const typeDefs = gql`
@@ -16,7 +25,8 @@ const typeDefs = gql`
     user(username: String!): User
   }
   type Mutation {
-    createAccount(username: String!, password: String!): User!
+    createAccount(username: String!, password: String!, personalInterests: [String!]!): User!
+    login(username: String!, password: String!): Boolean!
     deactivateAccount(uid: ID!): [User!]
     updatePersonalInterests(uid: ID!, personalInterests: [String!]!): User!
     createGroup(uid: ID!, game: String!, groupSize: Int!): User!
@@ -91,6 +101,9 @@ const resolvers = {
         if (args.password.length<8) {
           throw new Error("Pick a longer password");
         } 
+        if (args.personalInterests.length==0) {
+          throw new Error("Please pick an interest")
+        }
         const user = {
           uid: `user-${uidCount++}`,
           password: args.password,
@@ -98,11 +111,22 @@ const resolvers = {
           groups: [],
           friends: [],
           requests: [],
-          personalInterests: [],
+          personalInterests: args.personalInterests,
           }
           userlist.push(user)
           return user
       },
+
+      login: (parent, args) => {
+        for (let i=0; i<userlist.length; i++) {
+          if (userlist[i].username===args.username) {
+            if (userlist[i].password===args.password) {
+              return true;
+            }
+            else {return false;}
+          }
+        }
+      },      
 
       deactivateAccount: (parent, args) => {
         if (userlist.length==1) {
@@ -230,6 +254,7 @@ const resolvers = {
                   game: args.game,
                   messages: []
                 }
+                grouplist.push(group);
                 for (let k=0; k<memb.length; k++) {
                   memb[k].groups.push(group);
                 }
