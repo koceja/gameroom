@@ -142,7 +142,12 @@ const resolvers = {
         }
           let key = [args.game, args.groupSize];
           if (key in groupreqs) {
-            groupreqs[key] = groupreqs[key].push(usr);
+            urs = groupreqs[key];
+            if (urs.includes(usr)) {
+              throw new Error("Request being processed");
+            }
+            urs.push(usr);
+            groupreqs[key] = urs;
             let max = groupreqs[key].length;
             if (max<args.groupSize) {
               return usr;
@@ -152,25 +157,43 @@ const resolvers = {
               let indxs = [];
               for (let i=0; i<args.groupSize-1; i++) {
                 indxs.push[i];
+                indxs[i]=i;
               }
+              console.log(indxs[0]);
+              console.log(urs);
+              let common;
+              let c;
               while (indxs[0]!=max-args.groupSize+1) {
-                for (let j=0; j<groupreqs[key][indxs[0]].personalInterests.length; j++) {
+                console.log(urs[max-1].personalInterests);
+                let a = indxs[0];
+                
+                console.log(urs[a].personalInterests);
+                for (let j=0; j<urs[a].personalInterests.length; j++) {
                   let passed = true;
-                  for (let k=1; k<max-1; k++) {
-                    if (groupreqs[key][indxs[k]].personalInterests.includes(
-                      groupreqs[key][indxs[0]].personalInterests[j])) {
+                  console.log(urs[a].personalInterests[j]);
+                  console.log(urs[max-1].personalInterests);
+                  console.log(urs[max-1].personalInterests.includes(
+                    urs[a].personalInterests[j]));
+                  for (let k=1; k<args.groupSize-1; k++) {
+                    let b = indxs[k];
+                    if (urs[b].personalInterests.includes(
+                      urs[a].personalInterests[j])) {
                         continue;
                       } else {passed = false; break;}
                   }
                   if (passed) {
-                    if (groupreqs[key][max-1].personalInterests.includes(
-                      groupreqs[key][indxs[0]].personalInterests[j])) {
+                    if (urs[max-1].personalInterests.includes(
+                      urs[a].personalInterests[j])) {
                         found = true;
+                        c= indxs[0];
                         indxs[0]=max-args.groupSize+1;
+                        common = urs[a].personalInterests[j];
+                        j=urs[a].personalInterests.length;
                         break;
                       }
                   }
                 }
+                if (!found) {
                 indxs[args.groupSize-2] = indxs[args.groupSize-2]+1;
                 for (let m=indxs.length-1; m>0; m--) {
                   if (indxs[m]>=max-(indxs.length-m)) {
@@ -178,28 +201,28 @@ const resolvers = {
                       indxs[m-1+g] = indxs[m-1] + g+1;
                     }
                   }
-                }
+                } }
               }
               if (!found) {
                 return usr;
               } else {
                 let memb = [];
-                let usrs = groupreqs[key];
+                indxs[0]=c;
                 for (let i=0; i<indxs.length; i++) {
-                  memb.push(usrs[indx[i]]);
+                  memb.push(urs[indxs[i]]);
                 }
-                let usersclone = [...usrs];
+                let usersclone = [...urs];
                 for (let i=0; i<indxs.length; i++) {
-                  usrs[0]=usersclone[indx[i]-i];
-                  usrs[indx[i]-i]=usersclone[0];
-                  usrs.shift();
+                  urs[0]=usersclone[indxs[i]-i];
+                  urs[indxs[i]-i]=usersclone[0];
+                  urs.shift();
                 }
-                memb.push(usrs.pop());
-                groupreqs[key]=usrs;
+                memb.push(urs.pop());
+                groupreqs[key]=urs;
                 const group = {
                   gid: `group-${gidCount++}`,
                   members: memb,
-                  name: `${memb[0].username}'s ${pInterests[x]} group for ${args.game}`,
+                  name: `${memb[0].username}'s ${common} group for ${args.game}`,
                   link: "",
                   game: args.game,
                   messages: []
@@ -237,7 +260,7 @@ const resolvers = {
                   let found = false;
                   let pgroups = [...person.groups]
                   for (let m=0; m<person.groups.length-1;m++) {
-                      if (person.groups.gid===args.gid) {
+                      if (person.groups[m].gid===args.gid) {
                         found = true;
                       }
                       if (found) {
@@ -281,7 +304,7 @@ const resolvers = {
                   let found = false;
                   let pgroups = [...person.groups]
                   for (let m=0; m<person.groups.length-1;m++) {
-                      if (person.groups.gid===args.gid) {
+                      if (person.groups[m].gid===args.gid) {
                         found = true;
                       }
                       if (found) {
@@ -330,7 +353,7 @@ const resolvers = {
                   let found = false;
                   let pgroups = [...person.groups]
                   for (let m=0; m<person.groups.length-1;m++) {
-                      if (person.groups.gid===args.gid) {
+                      if (person.groups[m].gid===args.gid) {
                         found = true;
                       }
                       if (found) {
@@ -363,7 +386,7 @@ const resolvers = {
                   let found = false;
                   let pgroups = [...person.groups]
                   for (let m=0; m<person.groups.length-1;m++) {
-                      if (person.groups.gid===args.gid) {
+                      if (person.groups[m].gid===args.gid) {
                         found = true;
                       }
                       if (found) {
@@ -408,9 +431,9 @@ const resolvers = {
             if (userlist[i].uid===args.uid) {
               let ureqs = [...userlist[i].requests]
               for (j=0; j<userlist[i].requests.length; j++) {
-                if (userlist[j].username===args.from) {
-                  userlist[i].friends.push(userlist[j]);
-                  userlist[j].friends.push(userlist[i]);
+                if (userlist[i].requests[j].username===args.from) {
+                  userlist[i].friends.push(userlist[i].requests[j]);
+                  userlist[i].requests[j].friends.push(userlist[i]);
                   userlist[i].requests[0]=ureqs[j];
                   userlist[i].requests[j]=ureqs[0];
                   userlist[i].requests.shift();
@@ -426,7 +449,7 @@ const resolvers = {
             if (userlist[i].uid===args.uid) {
               let ureqs = [...userlist[i].requests]
               for (j=0; j<userlist[i].requests.length; j++) {
-                if (userlist[j].username===args.from) {
+                if (userlist[i].requests[j].username===args.from) {
                   userlist[i].requests[0]=ureqs[j];
                   userlist[i].requests[j]=ureqs[0];
                   userlist[i].requests.shift();
