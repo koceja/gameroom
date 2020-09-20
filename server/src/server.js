@@ -5,15 +5,31 @@ const bodyParser = require('body-parser');
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
 const { makeExecutableSchema } = require('graphql-tools');
 const e = require('express');
-// const mongoose = require('mongoose');
-// mongoose.connect("mongodb://localhost:27017/UserApp");
+const mongoose = require('mongoose');
+mongoose.connect("mongodb+srv://sahilp:xjKCN5AHSres51Jt@cluster0.bvhd7.mongodb.net/Gameroom?retryWrites=true&w=majority", { useUnifiedTopology: true, useNewUrlParser: true });
 
-// const User = mongoose.model("User", {
-//   username: String,
-//   password: String,
-//   groups: [Group],
+const User = mongoose.model ("User", {
+  username: String,
+  password: String,
+  friends: String,
+  groups: String,
+  requests: String,
+  personalInterests: String
+})
 
-// })
+const Group = mongoose.model ("Group", {
+  members: String,
+  name: String,
+  link: String,
+  game: String,
+  messages: String
+})
+
+const Message = mongoose.model ("Message", {
+  sender: String,
+  content: String,
+  time: String
+})
 
 const typeDefs = `
   type Query {
@@ -503,6 +519,9 @@ app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
 // Start the server
+mongoose.connection.once("open", () =>{
+  console.log("connected to database");
+})
 app.listen(4000, () => {
   console.log('Go to http://localhost:4000/graphiql to run queries!');
 });
