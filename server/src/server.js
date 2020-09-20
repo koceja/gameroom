@@ -279,7 +279,7 @@ const resolvers = {
                 for (let k=0; k<memb.length; k++) {
                   memb[k].groups.push(group);
                 }
-                return memb[0];
+                return usr;
   
               }
             }
