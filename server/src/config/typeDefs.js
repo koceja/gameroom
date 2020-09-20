@@ -1,4 +1,4 @@
-export const typeDefs = `
+const typeDefs = `
   type Query {
     users: [User!]
     groups: [Group!]
@@ -8,7 +8,8 @@ export const typeDefs = `
     createAccount(username: String!, password: String!): User!
     deactivateAccount(uid: ID!): [User!]
     updatePersonalInterests(uid: ID!, personalInterests: [PersonalInterest!]): User!
-    createGroup(uid: ID!, personalInterests: [PersonalInterest!], game: GameInterest!): User!
+    updateGameInterests(uid: ID!, gameInterests: [GameInterest!]): User!
+    createGroup(uid: ID!, personalInterests: [PersonalInterest!], game: GameInterest!, groupSize: Int!): User!
     leaveGroup(uid: ID!, gid: ID!): User!
     sendMessage(uid: ID!, message: Message!, gid: ID!): User!
     changePassword(uid: ID!, password: String!): User!
@@ -36,8 +37,9 @@ export const typeDefs = `
     messages: [Message!]
   }
   type Message {
+    sender: User!
     content: String!
-    time: Date!
+    time: String!
   }
   type GameInterest {
       game: String!
@@ -47,6 +49,6 @@ export const typeDefs = `
   }
   type Request {
     from: User!
-    time: Date!
+    time: String!
   }
 `

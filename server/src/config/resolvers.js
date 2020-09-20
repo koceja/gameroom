@@ -1,49 +1,81 @@
-// The resolvers
+// Some initial data
+let userlist = [{
+    uid: 'user-0',
+    username: 'admin',
+    password: 'unloggable',
+    groups: null,
+    friends: null,
+    personalInterests: null,
+    gameInterests: null
+  }]
+let grouplist = []
+let uidCount = userlist.length
+let gidCount = grouplist.length
+  // The resolvers
 const resolvers = {
     Query: {
-      info: () => `This is the API of a Hackernews Clone`,
-      // 2
-      feed: () => links,
-      link: (parent, args) => {
-          for (var i =0; i<=idCount; i++) {
-              if (links[i].id===args.id) {
-                  return links[i];
+      users: () => userlist,
+      groups: () => grouplist,
+      user: (parent, args) => {
+          for (let i =0; i<=uidCount; i++) {
+              if (userlist[i].username===args.username) {
+                  return userlist[i];
               }
           }
       }
     },
-    // 3
+
     Mutation : {
-        post: (parent, args) => {
-            const link = {
-            id: `link-${idCount++}`,
-            description: args.description,
-            url: args.url,
+
+        createAccount: (parent, args) => {
+            const user = {
+            id: `user-${uidCount++}`,
+            password: args.password,
+            username: args.username,
+            groups: [],
+            friends: [],
+            requests: [],
+            personalInterests: [],
+            gameInterests: []
             }
-            links.push(link)
-            return link
+            userlist.push(user)
+            return user
         },
-        updateLink: (parent, args) => {
-          for (var i =0; i<=idCount; i++) {
-              if (links[i].id===args.id) {
-                  links[i].description = args.description
-                  links[i].url = args.url
-                  return links[i]
+
+        deactivateAccount: (parent, args) => {
+            for (let i =0; i<=uidCount; i++) {
+                if (userlist[i].id===args.id) {
+                    let alpha = [...userlist]
+                    userlist[i]=alpha[0]
+                    userlist[0]=alpha[i]
+                    userlist.shift()
+                    break;
+                }
+            }
+            return userlist;
+        },
+
+        updatePersonalInterests: (parent, args) => {
+          for (let i =0; i<=uidCount; i++) {
+              if (userlist[i].id===args.id) {
+                  userlist[i].personalInterests = args.personalInterests
+                  return userlist[i]
               }
           }
-      },
-        deleteLink: (parent, args) => {
-          for (let i =0; i<=idCount; i++) {
-              if (links[i].id===args.id) {
-                  let alpha = [...links]
-                  links[i]=alpha[0]
-                  links[0]=alpha[i]
-                  links.shift()
-                  break;
-              }
-          }
-          return links;
-      }
+        },
+
+        updateGameInterests: (parent, args) => {
+            for (let i =0; i<=uidCount; i++) {
+                if (userlist[i].id===args.id) {
+                    userlist[i].gameInterests = args.gameInterests
+                    return userlist[i]
+                }
+            }
+          },
+
+        createGame: (parent, args) => {
+        }
+        
   
     }
   }
