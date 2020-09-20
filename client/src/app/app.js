@@ -5,11 +5,19 @@ import Groups from '../pages/groups/groups.js';
 import Profile from '../pages/profile/profile.js';
 import Login from '../pages/login/login.js';
 import Create from '../pages/login/create.js';
+import PrivateRoute from './auth.js';
 
 
 
 class App extends React.Component {
+
+	isLoggedIn() {
+		const username = localStorage.getItem('username');
+		return (!!username);
+	}
+
 	render() {
+		const authed = this.isLoggedIn();
 		return (
 			<div>
 				<Switch>
@@ -22,12 +30,8 @@ class App extends React.Component {
 					<Route exact path="/">
 						<Home />
 					</Route>
-					<Route exact path="/groups">
-						<Groups />
-					</Route>
-					<Route exact path="/profile">
-						<Profile />
-					</Route>
+					<PrivateRoute component={<Groups />} authed={authed} path="/groups" />
+					<PrivateRoute component={<Profile />} authed={authed} path="/profile" />
 				</Switch>
 			</div>
 				
