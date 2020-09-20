@@ -2,16 +2,16 @@ import React from 'react';
 import { Row, Col, Card, Form, Input, Button, Checkbox } from 'antd';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/logo.png';
-import { gql, useQuery } from '@apollo/client';
+import { gql, useMutation } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
-const ACTIVATE_ACCOUNT = gql`
-  mutation GetDogs {
-    dogs {
-      id
-      breed
-    }
+
+const LOGIN = gql`
+  mutation login($username: String!, $password: String!) {
+    login(username: $username, password: $password)
   }
 `;
+
 
 const layout = {
     labelCol: {
@@ -29,7 +29,23 @@ const tailLayout = {
 };
 
 const Login = () => {
+    const [
+        login,
+        { loading: mutationLoading, error: mutationError }
+      ] = useMutation(LOGIN, {
+    
+        onCompleted
+        (
+        { login }
+        )
+         
+        {
+        
+              localStorage.setItem("username", login);
+              client.writeData({ data: { isLoggedIn: true } });    }
+          });
     const onFinish = (values) => {
+        login({variables: {username: values.username, password: values.password}});
         console.log('Success:', values);
     };
 

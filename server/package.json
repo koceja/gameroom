@@ -17,6 +17,7 @@
     "express": "^4.17.1",
     "graphql": "^15.3.0",
     "graphql-tools": "^6.2.3",
-    "mongodb": "^3.6.2"
+    "mongodb": "^3.6.2",
+    "mongoose": "^5.10.6"
   }
 }

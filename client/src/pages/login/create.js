@@ -16,8 +16,8 @@ const USER = gql`
 
 
 const CREATE_ACCOUNT = gql`
-  mutation createAccount($username: String!, $password: String!) {
-    createAccount(username: $username, password: $password) {
+  mutation createAccount($username: String!, $password: String!, $personalInterests: [String!]!) {
+    createAccount(username: $username, password: $password, personalInterests: $personalInterests) {
       username
       password
     }
@@ -50,7 +50,7 @@ const Create = () => {
         { loading: mutationLoading, error: mutationError }
       ] = useMutation(CREATE_ACCOUNT);
     const onFinish = (values) => {
-        createAccount({variables: {username: values.username, password: values.password}});
+        createAccount({variables: {username: values.username, password: values.password, personalInterests: values.interests}});
         console.log('Success:', values);
     };
 
