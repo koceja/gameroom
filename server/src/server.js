@@ -42,6 +42,9 @@ const typeDefs = gql`
     groups: [Group!]
     user(username: String!): User
   }
+  type Subscription {
+    notificationReceived(uid: ID!): User!
+  }
   type Mutation {
     createAccount(username: String!, password: String!, personalInterests: [String!]!): User!
     login(username: String!, password: String!): User!
@@ -100,7 +103,7 @@ const resolvers = {
     users: () => userlist,
     groups: () => grouplist,
     user: (parent, args) => {
-        for (let i =0; i<uidCount; i++) {
+        for (let i =0; i<userlist.length; i++) {
             if (userlist[i].username===args.username) {
                 return userlist[i];
             }
@@ -276,7 +279,7 @@ const resolvers = {
                 for (let k=0; k<memb.length; k++) {
                   memb[k].groups.push(group);
                 }
-                return memb[0];
+                return usr;
   
               }
             }
@@ -304,12 +307,13 @@ const resolvers = {
                 for(let k=0; k<grouplist[j].members.length; k++) {
                   let person = grouplist[j].members[k];
                   let found = false;
-                  let pgroups = [...person.groups]
+                  
                   for (let m=0; m<person.groups.length-1;m++) {
                       if (person.groups[m].gid===args.gid) {
                         found = true;
                       }
                       if (found) {
+                        let pgroups = [...person.groups]
                         person.groups[m] = pgroups[m+1];
                         person.groups[m+1] = pgroups[m];
                       }
@@ -348,12 +352,13 @@ const resolvers = {
                 for (let k=0; k<userlist[j].groups[i].members.length; k++) {
                   let person = userlist[j].groups[i].members[k];
                   let found = false;
-                  let pgroups = [...person.groups]
+                  
                   for (let m=0; m<person.groups.length-1;m++) {
                       if (person.groups[m].gid===args.gid) {
                         found = true;
                       }
                       if (found) {
+                        let pgroups = [...person.groups]
                         person.groups[m] = pgroups[m+1];
                         person.groups[m+1] = pgroups[m];
                       }
@@ -397,12 +402,13 @@ const resolvers = {
                 for (let k=0; k<userlist[j].groups[i].members.length; k++) {
                   let person = userlist[j].groups[i].members[k];
                   let found = false;
-                  let pgroups = [...person.groups]
+                  
                   for (let m=0; m<person.groups.length-1;m++) {
                       if (person.groups[m].gid===args.gid) {
                         found = true;
                       }
                       if (found) {
+                        let pgroups = [...person.groups]
                         person.groups[m] = pgroups[m+1];
                         person.groups[m+1] = pgroups[m];
                       }
@@ -430,12 +436,13 @@ const resolvers = {
                 for (let k=0; k<userlist[j].groups[i].members.length; k++) {
                   let person = userlist[j].groups[i].members[k];
                   let found = false;
-                  let pgroups = [...person.groups]
+                  
                   for (let m=0; m<person.groups.length-1;m++) {
                       if (person.groups[m].gid===args.gid) {
                         found = true;
                       }
                       if (found) {
+                        let pgroups = [...person.groups]
                         person.groups[m] = pgroups[m+1];
                         person.groups[m+1] = pgroups[m];
                       }
@@ -505,7 +512,17 @@ const resolvers = {
             }
         }
         },
-  }
+  },
+
+  Subscription: {
+    notificationReceived: (parent, args) => {
+        for (let i=0; i<userlist.length; i++) {
+          if (userlist[i].uid===args.uid) {
+            return userlist[i]
+          }
+        }
+    }
+  },
 }
 
 // Put together a schema
