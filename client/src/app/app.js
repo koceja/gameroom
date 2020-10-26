@@ -7,6 +7,8 @@ import Login from '../pages/login/login.js';
 import Create from '../pages/login/create.js';
 import PrivateRoute from './auth.js';
 
+import './app.css';
+
 
 
 class App extends React.Component {

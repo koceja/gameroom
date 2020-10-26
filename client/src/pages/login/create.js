@@ -44,6 +44,9 @@ const interests = ['spirituality', 'baking', 'golf', 'gardening', 'surfing', 'sp
 
 const Create = () => {
     const { loading, error, data } = useQuery(USER);
+
+    
+
     if (!loading) {console.log(data);}
     const [
         createAccount,

@@ -10,7 +10,7 @@ import './home.css';
 function Content() {
     return (
         <div>
-            <Row style={{height: "40vh", backgroundColor: "white", textAlign: "center"}} align="middle">
+            <Row id="home-main" style={{height: "40vh", textAlign: "center"}} align="middle">
                 <Col xs={{span: 20, offset: 2}} sm={{span: 20, offset: 2}} md={{span: 16, offset: 4}} lg={{span: 14, offset: 5}} xl={{span: 10, offset: 7}} xxl={{span: 8, offset: 8}}>
                     <img style={{width: "100%"}} src={logo} alt="logo" />
                     <h2>Find groups to play your favorite games</h2>

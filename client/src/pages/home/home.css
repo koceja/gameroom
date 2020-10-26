@@ -1,4 +1,11 @@
+#home-main {
+    background-color: #001529;
+    color: white;
+}
 
+#home-main h2 {
+    color: white;
+}
 
 #home-descriptions {
     padding-top: 70px;
